@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import PropTypes from "prop-types";
 const containerStyle = {
   display: "flex",
   alignItems: "center",
@@ -10,20 +10,34 @@ const starContainerStyle = {
   display: "flex",
 };
 
+StarRating.prototype = {
+  maxRating: PropTypes.number,
+  color: PropTypes.string,
+  size: PropTypes.number,
+  className: PropTypes.string,
+  messages: PropTypes.array,
+  defaultRating: PropTypes.number,
+  onSetRating: PropTypes.func,
+};
 
 // we can set a default prop by initialazing the value to the prop , so if the user dont put any value, it will take the default one
 export default function StarRating({
   maxRating = 5,
   color = "#fcc419",
   size = 48,
-  className = '',
-  messages=[]
+  className = "",
+  messages = [],
+  defaultRating = 0,
+  onSetRating,
 }) {
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(
+    defaultRating <= maxRating ? defaultRating : 0
+  );
   const [tempRating, setTempRating] = useState(0);
 
   function handleRating(rating) {
     setRating(rating);
+    onSetRating(rating);
   }
 
   const textStyle = {
@@ -48,7 +62,11 @@ export default function StarRating({
           />
         ))}
       </div>
-      <p style={textStyle}>{ messages.length === maxRating ? (messages[tempRating ?  tempRating-1 : rating-1]  || "") : (tempRating || rating || "")}</p>
+      <p style={textStyle}>
+        {messages.length === maxRating
+          ? messages[tempRating ? tempRating - 1 : rating - 1] || ""
+          : tempRating || rating || ""}
+      </p>
     </div>
   );
 }
